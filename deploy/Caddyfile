@@ -1,0 +1,11 @@
+{$APP_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy frontend:8080
+}
+
+{$API_DOMAIN} {
+    request_body {
+        max_size 10MB
+    }
+    reverse_proxy backend:8010
+}

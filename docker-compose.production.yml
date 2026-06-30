@@ -1,0 +1,36 @@
+services:
+  backend:
+    ports: []
+    expose:
+      - "8010"
+
+  frontend:
+    ports: []
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2.10-alpine
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?set APP_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN:?set API_DOMAIN}
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

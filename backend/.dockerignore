@@ -1,0 +1,14 @@
+__pycache__
+.pytest_cache
+*.pyc
+.env
+*.db
+*.db-*
+*.db.*
+*.sqlite*
+*.backup
+*.bak
+*.log
+tests
+.coverage
+htmlcov

@@ -1,0 +1,41 @@
+# Secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Live business data and runtime output
+*.db
+*.db-*
+*.db.*
+*.sqlite
+*.sqlite3
+*.backup
+*.bak
+*.log
+logs/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Frontend
+node_modules/
+dist/
+coverage/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

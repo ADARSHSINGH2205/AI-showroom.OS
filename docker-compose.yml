@@ -1,0 +1,75 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ai_showroom_os
+      POSTGRES_USER: ${POSTGRES_USER:-showroom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-showroom} -d ai_showroom_os"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-showroom}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/ai_showroom_os
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY}
+      SEED_OWNER_USERNAME: ${SEED_OWNER_USERNAME:?set SEED_OWNER_USERNAME}
+      SEED_OWNER_PASSWORD: ${SEED_OWNER_PASSWORD:?set SEED_OWNER_PASSWORD}
+      AI_PROVIDER: gemini
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS as a JSON array}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS as a JSON array}
+      OWNER_MOBILE_NUMBER: ${OWNER_MOBILE_NUMBER:-}
+      SMS_PROVIDER: ${SMS_PROVIDER:-console}
+      TEXTBELT_API_KEY: ${TEXTBELT_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8010:8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/ready', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5174:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
