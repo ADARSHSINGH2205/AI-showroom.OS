@@ -17,4 +17,4 @@ COPY --chown=showroom:showroom . .
 USER showroom
 
 EXPOSE 8010
-CMD ["sh", "-c", "alembic upgrade head && python -m app.db.seed_cli && uvicorn app.main:app --host 0.0.0.0 --port 8010 --no-server-header"]
+CMD ["sh", "-c", "alembic upgrade head && python -m app.db.seed_cli && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8010} --no-server-header"]
