@@ -32,7 +32,7 @@ The Render backend URL will normally be:
 https://ai-showroom-os-api.onrender.com
 ```
 
-If Render gives a different URL, update `ALLOWED_HOSTS` in Render to match the hostname only.
+The Blueprint uses `ALLOWED_HOSTS=["*.onrender.com"]` so Render assigned hostnames can pass health checks. When you add a custom API domain later, replace it with that exact API hostname.
 
 ## Frontend on Vercel
 

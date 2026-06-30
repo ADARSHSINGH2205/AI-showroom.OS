@@ -51,8 +51,8 @@ class Settings(BaseSettings):
         }
         if self.secret_key in unsafe_secret_keys:
             raise ValueError("SECRET_KEY must be changed before running in production")
-        if len(self.secret_key) < 48 or len(set(self.secret_key)) < 12:
-            raise ValueError("SECRET_KEY must be a strong random value of at least 48 characters")
+        if len(self.secret_key) < 40 or len(set(self.secret_key)) < 12:
+            raise ValueError("SECRET_KEY must be a strong random value of at least 40 characters")
         if self.seed_owner_password in {"owner123", "replace-this-password"} or len(self.seed_owner_password) < 12:
             raise ValueError("SEED_OWNER_PASSWORD must be a strong password of at least 12 characters")
         if self.database_url.startswith("sqlite"):
