@@ -27,7 +27,7 @@ services:
       - key: SEED_OWNER_PASSWORD
         sync: false
       - key: CORS_ORIGINS
-        value: '["https://ai-showroom-os.vercel.app"]'
+        value: '["https://frontend-three-alpha-55.vercel.app"]'
       - key: ALLOWED_HOSTS
         value: '["*.onrender.com"]'
       - key: AI_PROVIDER
