@@ -28,12 +28,7 @@ npm run dev -- --host 0.0.0.0 --port 5174
 
 Open `http://localhost:5174`. API documentation is at `http://localhost:8010/docs`.
 
-Default local owner account:
-
-- Username: `owner`
-- Password: `owner123`
-
-Change the default password and `SECRET_KEY` before real business use.
+Default local owner account is created from `.env` values. For real business use, set `SEED_OWNER_USERNAME`, `SEED_OWNER_PASSWORD`, and `SECRET_KEY` before starting the backend.
 
 ## Run with Docker and PostgreSQL
 
@@ -72,7 +67,7 @@ Before giving this to a client or using it with real business data:
 - Set `POSTGRES_PASSWORD` and use PostgreSQL, not SQLite.
 - Set `CORS_ORIGINS` to the deployed frontend origin as a JSON array, for example `["https://showroom.example.com"]`.
 - Set `VITE_API_URL` to the deployed backend API URL, for example `https://api.showroom.example.com/api/v1`.
-- Set `OWNER_WHATSAPP_NUMBER` if WhatsApp owner bill links should open directly to your number.
+- Set `OWNER_MOBILE_NUMBER` for owner bill copies. Set `SMS_PROVIDER=console` for testing, or `SMS_PROVIDER=textbelt` with `TEXTBELT_API_KEY` for real SMS delivery.
 - Rotate any Gemini key that was ever shared in chat or screenshots.
 
 Production startup intentionally fails when required secrets are missing or unsafe.
