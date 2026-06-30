@@ -17,9 +17,10 @@ Use the repository's `render.yaml` as a Render Blueprint.
 4. Render will create:
    - `ai-showroom-os-api`
    - `ai-showroom-os-db`
-5. Before first deploy, set these Render environment variables:
+5. Before first deploy, set these Render environment variables. `DATABASE_URL` must be the internal connection URL from the active Render Postgres database:
 
 ```env
+DATABASE_URL=<active-render-postgres-internal-url>
 SEED_OWNER_USERNAME=<your-login-username>
 SEED_OWNER_PASSWORD=<strong-password-at-least-12-characters>
 GEMINI_API_KEY=<your-rotated-gemini-key>
