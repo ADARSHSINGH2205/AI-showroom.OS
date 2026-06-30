@@ -44,7 +44,7 @@ SEED_OWNER_USERNAME=<owner-login-name>
 SEED_OWNER_PASSWORD=<strong-password-at-least-12-characters>
 POSTGRES_PASSWORD=<strong-database-password>
 GEMINI_API_KEY=<your-gemini-api-key>
-SMS_PROVIDER=console
+SMS_PROVIDER=whatsapp
 OWNER_MOBILE_NUMBER=91xxxxxxxxxx
 ```
 

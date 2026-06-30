@@ -39,6 +39,4 @@ services:
       - key: OWNER_MOBILE_NUMBER
         sync: false
       - key: SMS_PROVIDER
-        value: console
-      - key: TEXTBELT_API_KEY
-        sync: false
+        value: whatsapp

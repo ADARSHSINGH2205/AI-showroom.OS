@@ -24,6 +24,7 @@ SEED_OWNER_USERNAME=<your-login-username>
 SEED_OWNER_PASSWORD=<strong-password-at-least-12-characters>
 GEMINI_API_KEY=<your-rotated-gemini-key>
 OWNER_MOBILE_NUMBER=91xxxxxxxxxx
+SMS_PROVIDER=whatsapp
 ```
 
 The Render backend URL will normally be:

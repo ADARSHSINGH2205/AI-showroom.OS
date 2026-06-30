@@ -67,7 +67,7 @@ Before giving this to a client or using it with real business data:
 - Set `POSTGRES_PASSWORD` and use PostgreSQL, not SQLite.
 - Set `CORS_ORIGINS` to the deployed frontend origin as a JSON array, for example `["https://showroom.example.com"]`.
 - Set `VITE_API_URL` to the deployed backend API URL, for example `https://api.showroom.example.com/api/v1`.
-- Set `OWNER_MOBILE_NUMBER` for owner bill copies. Set `SMS_PROVIDER=console` for testing, or `SMS_PROVIDER=textbelt` with `TEXTBELT_API_KEY` for real SMS delivery.
+- Set `OWNER_MOBILE_NUMBER` for owner bill copies. Set `SMS_PROVIDER=whatsapp` to generate free WhatsApp bill links, or `SMS_PROVIDER=console` for local testing.
 - Rotate any Gemini key that was ever shared in chat or screenshots.
 
 Production startup intentionally fails when required secrets are missing or unsafe.

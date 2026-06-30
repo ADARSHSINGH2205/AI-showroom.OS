@@ -37,8 +37,7 @@ class Settings(BaseSettings):
     ai_provider: Literal["gemini"] = "gemini"
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-3.5-flash"
-    sms_provider: Literal["auto", "textbelt", "console"] = "console"
-    textbelt_api_key: str | None = "textbelt"
+    sms_provider: Literal["whatsapp", "console"] = "whatsapp"
 
     @model_validator(mode="after")
     def validate_production_settings(self):
@@ -61,8 +60,6 @@ class Settings(BaseSettings):
             raise ValueError("Production CORS_ORIGINS must contain only explicit HTTPS origins")
         if not self.allowed_hosts or "*" in self.allowed_hosts:
             raise ValueError("Production ALLOWED_HOSTS must list explicit hostnames")
-        if self.sms_provider == "textbelt" and not self.textbelt_api_key:
-            raise ValueError("Textbelt SMS requires TEXTBELT_API_KEY")
         return self
 
     model_config = SettingsConfigDict(env_file=ROOT_ENV_FILE, env_file_encoding="utf-8", extra="ignore")
