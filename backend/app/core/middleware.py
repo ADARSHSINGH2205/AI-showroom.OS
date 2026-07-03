@@ -25,7 +25,7 @@ class SecurityHeadersMiddleware:
                 headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
                 headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
                 headers["X-Request-ID"] = request_id
-                if scope.get("path", "").startswith("/api/v1/auth"):
+                if scope.get("path", "").startswith("/api/v1"):
                     headers["Cache-Control"] = "no-store"
                     headers["Pragma"] = "no-cache"
                 if self.production:
