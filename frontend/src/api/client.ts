@@ -56,7 +56,11 @@ export class ApiClient {
   products() { return this.request<Product[]>('/products'); }
   createProduct(payload: unknown) { return this.request<Product>('/products', { method: 'POST', body: JSON.stringify(payload) }); }
   adjustStock(productId: number, quantity: number, note: string) { return this.request('/inventory/movements', { method: 'POST', body: JSON.stringify({ product_id: productId, movement_type: 'adjustment_out', quantity, note }) }); }
-  deleteProduct(productId: number, mode: 'stock_only' | 'purge_all' = 'stock_only') { return this.request(`/products/${productId}?mode=${mode}`, { method: 'DELETE' }); }
+  deleteProduct(productId: number, mode: 'stock_only' | 'purge_all' = 'stock_only', confirmation?: string) {
+    const params = new URLSearchParams({ mode });
+    if (confirmation) params.set('confirmation', confirmation);
+    return this.request(`/products/${productId}?${params}`, { method: 'DELETE' });
+  }
   customers() { return this.request<Customer[]>('/customers'); }
   createCustomer(payload: unknown) { return this.request<Customer>('/customers', { method: 'POST', body: JSON.stringify(payload) }); }
   suppliers() { return this.request<Supplier[]>('/suppliers'); }
@@ -89,6 +93,7 @@ export class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
 
 
 
