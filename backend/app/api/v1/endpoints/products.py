@@ -38,3 +38,16 @@ def delete_product_endpoint(
         raise HTTPException(status_code=400, detail="Type PURGE to remove all product and financial history")
     delete_product(db, product_id, mode)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{product_id}/purge")
+def purge_product_endpoint(
+    product_id: int,
+    confirmation: str | None = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_owner),
+) -> dict[str, int | bool]:
+    if confirmation != "PURGE":
+        raise HTTPException(status_code=400, detail="Type PURGE to remove all product and financial history")
+    removed = delete_product(db, product_id, "purge_all") or {}
+    return {"product_deleted": True, **removed}

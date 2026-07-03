@@ -61,6 +61,10 @@ export class ApiClient {
     if (confirmation) params.set('confirmation', confirmation);
     return this.request(`/products/${productId}?${params}`, { method: 'DELETE' });
   }
+  purgeProduct(productId: number, confirmation: string) {
+    const params = new URLSearchParams({ confirmation });
+    return this.request<{ product_deleted: boolean; inventory_movements_removed: number; sale_items_removed: number; purchase_items_removed: number }>(`/products/${productId}/purge?${params}`, { method: 'POST' });
+  }
   customers() { return this.request<Customer[]>('/customers'); }
   createCustomer(payload: unknown) { return this.request<Customer>('/customers', { method: 'POST', body: JSON.stringify(payload) }); }
   suppliers() { return this.request<Supplier[]>('/suppliers'); }

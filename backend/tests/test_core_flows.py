@@ -165,8 +165,9 @@ def test_purge_product_removes_related_revenue_profit_and_product_trace(client):
     after_sale = client.get("/api/v1/dashboard", headers=headers).json()
     assert Decimal(after_sale["today_sales"]) == Decimal(before["today_sales"]) + Decimal(sale["total"])
 
-    removed = client.delete(f'/api/v1/products/{product["id"]}?mode=purge_all&confirmation=PURGE', headers=headers)
-    assert removed.status_code == 204
+    removed = client.post(f'/api/v1/products/{product["id"]}/purge?confirmation=PURGE', headers=headers)
+    assert removed.status_code == 200
+    assert removed.json()["product_deleted"] is True
     after_purge = client.get("/api/v1/dashboard", headers=headers).json()
     assert Decimal(after_purge["today_sales"]) == Decimal(before["today_sales"])
     assert Decimal(after_purge["today_profit"]) == Decimal(before["today_profit"])

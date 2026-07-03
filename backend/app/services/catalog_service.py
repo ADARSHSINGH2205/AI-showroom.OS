@@ -150,29 +150,48 @@ def _recalculate_purchases_after_purge(db: Session, purchase_ids: set[int]) -> N
             purchase.supplier.outstanding_amount = max(purchase.supplier.outstanding_amount - old_due + new_due, ZERO)
 
 
-def _purge_product_and_financial_history(db: Session, product: Product) -> None:
+def _purge_product_and_financial_history(db: Session, product: Product) -> dict[str, int]:
     sale_ids = {row[0] for row in db.query(SaleItem.sale_id).filter(SaleItem.product_id == product.id).all()}
     purchase_ids = {row[0] for row in db.query(PurchaseItem.purchase_id).filter(PurchaseItem.product_id == product.id).all()}
 
-    db.query(InventoryMovement).filter(InventoryMovement.product_id == product.id).delete(synchronize_session=False)
-    db.query(SaleItem).filter(SaleItem.product_id == product.id).delete(synchronize_session=False)
-    db.query(PurchaseItem).filter(PurchaseItem.product_id == product.id).delete(synchronize_session=False)
+    movements_removed = db.query(InventoryMovement).filter(InventoryMovement.product_id == product.id).delete(synchronize_session=False)
+    sale_items_removed = db.query(SaleItem).filter(SaleItem.product_id == product.id).delete(synchronize_session=False)
+    purchase_items_removed = db.query(PurchaseItem).filter(PurchaseItem.product_id == product.id).delete(synchronize_session=False)
     db.flush()
 
     _recalculate_sales_after_purge(db, sale_ids)
     _recalculate_purchases_after_purge(db, purchase_ids)
     db.delete(product)
+    db.flush()
+
+    # Never acknowledge a purge while any product-linked database row survives.
+    remaining = (
+        db.query(Product).filter(Product.id == product.id).count()
+        + db.query(InventoryMovement).filter(InventoryMovement.product_id == product.id).count()
+        + db.query(SaleItem).filter(SaleItem.product_id == product.id).count()
+        + db.query(PurchaseItem).filter(PurchaseItem.product_id == product.id).count()
+    )
+    if remaining:
+        raise RuntimeError(f"Product {product.id} purge verification failed")
+
+    return {
+        "inventory_movements_removed": movements_removed,
+        "sale_items_removed": sale_items_removed,
+        "purchase_items_removed": purchase_items_removed,
+    }
 
 
-def delete_product(db: Session, product_id: int, mode: ProductDeleteMode = "stock_only") -> None:
-    product = db.get(Product, product_id)
+def delete_product(db: Session, product_id: int, mode: ProductDeleteMode = "stock_only") -> dict[str, int] | None:
+    product = db.get(Product, product_id, with_for_update=True)
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     if mode == "stock_only":
         _remove_current_stock_only(db, product)
+        result = None
     elif mode == "purge_all":
-        _purge_product_and_financial_history(db, product)
+        result = _purge_product_and_financial_history(db, product)
     else:
         raise HTTPException(status_code=400, detail="Invalid delete mode")
 
     db.commit()
+    return result

@@ -101,7 +101,8 @@ export const InventoryTable = ({ products, onChanged }: { products: Product[]; o
 
     setBusy(true);
     try {
-      await apiClient.deleteProduct(product.id, 'purge_all', 'PURGE');
+      const result = await apiClient.purgeProduct(product.id, 'PURGE');
+      if (!result.product_deleted) throw new Error('The server could not verify complete deletion');
       setMessage(`${product.name} was deleted completely. Stock, sale, purchase, profit, and revenue traces were removed.`);
       setDeleteTarget(null);
       setDeleteConfirmation('');
